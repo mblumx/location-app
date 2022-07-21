@@ -43,3 +43,25 @@ const middleOptions = {
     strokeColor: "#FBC02D" ,
     fillColor: "#FBC02D",
 };
+
+const farOptions = {
+    ...defaultOptions,
+    zIndex: 1,
+    fillOpacity: 0.05,
+    strokeColor: "#FF5252",
+    fillColor: "#FF5252",
+};
+
+const generateHouses = (position: LatLngLiteral) => {
+    const _houses: Array<LatLngLiteral> = [];
+    for (let i = 0; i < 100; i++) {
+        const direction = Math.random() < 0.5 ? -2 : 2;
+       _houses.push({
+        lat: position.lat + Math.random() / direction,
+        lng: position.lng + Math.random() / direction, 
+       });
+    }
+
+    return _houses;
+};
+
