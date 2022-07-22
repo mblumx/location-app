@@ -10,6 +10,7 @@ type DistanceProps = {
 
 export default function Distance({ leg }: DistanceProps) {
   if (!leg.distance || !leg.duration) return null;
+  console.log(leg);
 
   const days = Math.floor(
     (commutesPerYear * leg.duration.value) / secondsPerDay
