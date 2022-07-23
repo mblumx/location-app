@@ -1,13 +1,20 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import { GoogleMap, Marker, DirectionsRenderer, Circle, MarkerClusterer } from '@react-google-maps/api';
 import Places from './places';
+import { Component } from 'react';
 import Distance from './distance';
+import { toNamespacedPath } from 'node:path/win32';
+import { ToastContainer, toast, Zoom, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 type LatLngLiteral = google.maps.LatLngLiteral;
 type DirectionsResult = google.maps.DirectionsResult;
 type MapOptions = google.maps.MapOptions;
 
+
 export default function Map() {
+    const notify = () => toast("Hello!");
     const [office, setOffice] = useState<LatLngLiteral>();
     const mapRef = useRef<GoogleMap>();
     const [directions, setDirections] = useState<DirectionsResult>();
@@ -20,7 +27,6 @@ export default function Map() {
         }),
         []
     );
-
 
     const onLoad = useCallback((map: any) => (mapRef.current = map), []);
     const houses = useMemo(() => generateHouses(center), [center]);
@@ -38,24 +44,34 @@ export default function Map() {
             (result, status) => {
                 if (status === "OK" && result) {
                     setDirections(result);
+
+
                 }
             }
         )
-
     }
-
 
     return (
         <div className="container">
             <div className="controls">
-                <h1>Commute?</h1>
+                <div>
+                    <button onClick={notify}>Notify</button>
+                    <ToastContainer/>
+                </div>
+                <h1>Find Nearby Restaurants!</h1>
+
                 <Places setOffice={(position) => {
                     setOffice(position);
                     mapRef.current?.panTo(position);
+
                 }}
                 />
-                {!office && <p>Enter the address of your office.</p>}
+                {!office && <p>Enter your starting location.</p>}
                 {directions && <Distance leg={directions.routes[0].legs[0]} />}
+
+
+
+
             </div>
             <div className="map">
                 <GoogleMap zoom={10}
@@ -68,7 +84,8 @@ export default function Map() {
                             zIndex: 50,
                             strokeColor: "#1976D2",
                             strokeWeight: 5,
-                            }
+                        }
+
                     }} />}
 
                     {office && (
@@ -83,14 +100,16 @@ export default function Map() {
                                         clusterer={clusterer}
                                         onClick={() => {
                                             fetchDirections(house);
+                                        
                                         }} />
                                 ))}
                             </MarkerClusterer>
+                           
 
 
-                            <Circle center={office} radius={15000} options={closeOptions} />
-                            <Circle center={office} radius={30000} options={middleOptions} />
-                            <Circle center={office} radius={45000} options={farOptions} />
+                            <Circle center={office} radius={5000} options={closeOptions} />
+                            <Circle center={office} radius={10000} options={middleOptions} />
+                            <Circle center={office} radius={15000} options={farOptions} />
 
 
                         </>
